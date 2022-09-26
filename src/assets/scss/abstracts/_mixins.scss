@@ -1,0 +1,399 @@
+@use './colors';
+@use './variables';
+@use '../base/typography';
+
+$variants: (
+    secondary: colors.$background-error
+);
+
+// theme
+@mixin theme($name, $color) {
+    // Define colors in your theme
+    $primary: $color;
+    $secondary: lighten(adjust-hue($color, 20), 10%);
+
+    // Add your classes with css colors added
+    .#{$name} {
+        .element {
+            color: $primary;
+        }
+
+        .other-element {
+            background: $secondary;
+        }
+    }
+}
+
+// Usage:
+// @include theme(theme-banana, yellow);
+//   theme
+
+//Padding mixin
+@mixin padding($top:null, $right:null, $bottom:null, $left:null) {
+    @if $top $right $bottom $left {
+        padding: $top $right $bottom $left;
+    } @else {
+        padding-top: $top;
+        padding-right: $right;
+        padding-bottom: $bottom;
+        padding-left: $left;
+    }
+  }
+// Padding
+
+
+  //Margin mixin
+  @mixin margin($top:null, $right:null, $bottom:null, $left:null) {
+    @if $top $right $bottom $left {
+        margin: $top $right $bottom $left;
+    } @else {
+        margin-top: $top;
+        margin-right: $right;
+        margin-bottom: $bottom;
+        margin-left: $left;
+    }
+  }
+//   Margin
+
+// Text alignment
+@mixin textAlign($alignment:variables.$left-alignment) {
+    text-align: $alignment;
+}
+
+
+// triangle mixin
+@mixin triangle ($size, $color, $direction) {
+    height: 0;
+    width: 0;
+
+    $width: nth($size, 1);
+    $height: nth($size, length($size));
+
+    $foreground-color: nth($color, 1);
+    $background-color: if(length($color)==2, nth($color, 2), transparent);
+
+    @if ($direction==up) or ($direction==down) or ($direction==right) or ($direction==left) {
+
+        $width: $width / 2;
+        $height: if(length($size) > 1, $height, $height/2);
+
+        @if $direction==up {
+            border-bottom: $height solid $foreground-color;
+            border-left: $width solid $background-color;
+            border-right: $width solid $background-color;
+
+        }
+
+        @else if $direction==right {
+            border-bottom: $width solid $background-color;
+            border-left: $height solid $foreground-color;
+            border-top: $width solid $background-color;
+
+        }
+
+        @else if $direction==down {
+            border-left: $width solid $background-color;
+            border-right: $width solid $background-color;
+            border-top: $height solid $foreground-color;
+
+        }
+
+        @else if $direction==left {
+            border-bottom: $width solid $background-color;
+            border-right: $height solid $foreground-color;
+            border-top: $width solid $background-color;
+        }
+    }
+
+    @else if ($direction==up-right) or ($direction==up-left) {
+        border-top: $height solid $foreground-color;
+
+        @if $direction==up-right {
+            border-left: $width solid $background-color;
+
+        }
+
+        @else if $direction==up-left {
+            border-right: $width solid $background-color;
+        }
+    }
+
+    @else if ($direction==down-right) or ($direction==down-left) {
+        border-bottom: $height solid $foreground-color;
+
+        @if $direction==down-right {
+            border-left: $width solid $background-color;
+
+        }
+
+        @else if $direction==down-left {
+            border-right: $width solid $background-color;
+        }
+    }
+
+    @else if ($direction==inset-up) {
+        border-color: $background-color $background-color $foreground-color;
+        border-style: solid;
+        border-width: $height $width;
+    }
+
+    @else if ($direction==inset-down) {
+        border-color: $foreground-color $background-color $background-color;
+        border-style: solid;
+        border-width: $height $width;
+    }
+
+    @else if ($direction==inset-right) {
+        border-color: $background-color $background-color $background-color $foreground-color;
+        border-style: solid;
+        border-width: $width $height;
+    }
+
+    @else if ($direction==inset-left) {
+        border-color: $background-color $foreground-color $background-color $background-color;
+        border-style: solid;
+        border-width: $width $height;
+    }
+}
+
+// Usage: 
+// .arrow-up {
+//     @include triangle(32px, $yellow, up);
+// }
+// triangle mixin //
+
+// truncate text
+@mixin truncateText($overflow: ellipsis) {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: $overflow; // values are: clip, ellipsis, or a string
+}
+
+// Usage: @include truncateText;
+// truncate text
+
+// border radius
+
+@mixin border-radius($radius: 0 0 0 0) {
+    border-radius: $radius
+}
+
+// Usage: @include border-radius(24px, 24px, 5px 5px 5px)
+// border radius
+
+// border
+
+@mixin border($width, $color, $style:solid, $direction: all) {
+    @if $direction==all {
+        border: $width $style $color
+    }
+
+    @else {
+        border-#{$direction}: $width $style $color;
+    }
+}
+
+// border
+
+// Positioning
+
+@mixin pseudo($pos, $content: '', $display: block, $inset: 0) {
+    content: $content;
+    display: $display;
+    position: $pos;
+    inset: $inset
+}
+
+// Usage:
+// .button {
+//     @include pseudo(fixed, '', flex, 4px)
+// }
+
+// Positioning
+
+// Flex
+
+@mixin flexbox($display: flex,
+    $direction: row,
+    $placeContent: null,
+    $placeItems: null,
+    $wrap: nowrap,
+    $shrink: 0,
+    $grow: 0,
+    $alignContent: null,
+    $justifyContent: null,
+    $alignItems: null,
+    $justifyItems: null,
+    $gap:0) {
+
+    display: $display;
+    // flex-direction: $direction;
+    @include flex-direction($direction);
+    gap: $gap;
+
+    @if $placeContent==null {
+        @if $alignContent {
+            align-content: $alignContent;
+        }
+
+        @if $justifyContent {
+            justify-content: $justifyContent;
+        }
+    }
+
+    @else {
+        place-content: $placeContent;
+    }
+
+    @if $placeItems==null {
+        @if $alignItems {
+            align-items: $alignItems;
+        }
+
+        @if $justifyItems {
+            justify-items: $justifyItems;
+        }
+    }
+
+    @else {
+        place-items: $placeItems;
+    }
+
+    flex-wrap: $wrap;
+    flex-shrink: $shrink;
+    flex-grow: $grow;
+}
+
+// Usage: 
+// .content-top {
+//     @include flexbox($placeItems: flex-start);
+// }
+// .content-left {
+//     @include flexbox($placeContent: flex-start);
+// }
+// Classname in element::: "box content-top content-left"
+
+@mixin flex-direction($value: row) {
+    @if $value==row-reverse {
+        -webkit-box-direction: reverse;
+        -webkit-box-orient: horizontal;
+    }
+
+    @else if $value==column {
+        -webkit-box-direction: normal;
+        -webkit-box-orient: vertical;
+    }
+
+    @else if $value==column-reverse {
+        -webkit-box-direction: reverse;
+        -webkit-box-orient: vertical;
+    }
+
+    @else {
+        -webkit-box-direction: normal;
+        -webkit-box-orient: horizontal;
+    }
+
+    -webkit-flex-direction: $value;
+    -moz-flex-direction: $value;
+    -ms-flex-direction: $value;
+    flex-direction: $value;
+}
+
+@mixin flex-grow($value: 0) {
+    -webkit-box-flex: $value;
+        -ms-flex-positive: $value;
+            flex-grow: $value
+}
+
+// Flex
+
+// Transition
+
+@mixin transition($transition) {
+    -moz-transition: $transition;
+    -o-transition: $transition;
+    -webkit-transition: $transition;
+    transition: $transition;
+}
+
+@mixin transition-property($property) {
+    -moz-transition-property: $property;
+    -o-transition-property: $property;
+    -webkit-transition-property: $property;
+    transition-property: $property;
+}
+
+@mixin transition-duration($duration) {
+    -moz-transition-property: $duration;
+    -o-transition-property: $duration;
+    -webkit-transition-property: $duration;
+    transition-property: $duration;
+}
+
+@mixin transition-timing-function($timing) {
+    -moz-transition-timing-function: $timing;
+    -o-transition-timing-function: $timing;
+    -webkit-transition-timing-function: $timing;
+    transition-timing-function: $timing;
+}
+
+@mixin transition-delay($delay) {
+    -moz-transition-delay: $delay;
+    -o-transition-delay: $delay;
+    -webkit-transition-delay: $delay;
+    transition-delay: $delay;
+}
+
+// Transition
+
+// Button
+
+@mixin button($button-color: colors.$background-white, $button-type: '', $button-border: bordered, $button-size: medium, $width: auto) {
+    // Standard Button Styles
+    @include border-radius(4px);
+    @include transition(.3s ease-in-out);
+    @include flexbox(inline-flex, $alignItems:center, $justifyContent:center);
+    @include padding(10px, 30px);
+    @include textAlign(variables.$center-alignment);
+    width: $width;
+    font-size: typography.$font-secondary;
+    font-weight: typography.$weight-medium;
+    line-height: typography.$lineHeight-secondary;
+    height: variables.$height-btn-small;
+    cursor: variables.$pointer-cursor;
+    background-color: $button-color;
+    color: colors.$text-blue;
+    
+    // Button Size (small or normal (or no value) )
+    @if $button-size==large {
+        font-size: typography.$font-heading;
+        font-weight: typography.$weight-bold;
+        line-height: typography.$lineHeight-bold;
+        height: variables.$height-btn-large;
+    }
+
+    @if $button-border==bordered {
+        @include border(1px, colors.$border-blue);
+
+        &:hover {
+            border-color: colors.$text-blue;
+        }
+    }
+
+    @each $variant, $color in $variants {
+        &-#{$variant} {
+            background-color: $color;
+
+            @if $variant == secondary {
+                color: colors.$text-white
+            }
+
+            &:hover {
+                border-color: darken($color, 20%);
+            }
+        }
+    }
+}
+
+// Button

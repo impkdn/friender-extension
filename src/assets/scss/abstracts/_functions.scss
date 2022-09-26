@@ -1,0 +1,15 @@
+// Convert value to em.
+@function strip-unit($number) {
+    @if type-of($number)=='number'and not unitless($number) {
+        @return $number / ($number * 0 + 1);
+    }
+
+    @return $number;
+}
+
+@function em($size, $base-font-size:16px) {
+    @return strip-unit($size) / strip-unit($base-font-size) * 1em;
+}
+
+// Usage : font-size:em(32px) //
+// Convert value to em.
